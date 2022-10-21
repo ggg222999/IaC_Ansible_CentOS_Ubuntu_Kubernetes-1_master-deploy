@@ -1,0 +1,43 @@
+---
+############## CentOS installation #################################
+  - name: (CentOS) Install dependencies for Docker
+    yum:
+      name: yum-utils
+      state: present
+    when: ansible_distribution  == 'CentOS'
+
+  - name: (CentOS) Add Docker repository
+    command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    when: ansible_distribution  == 'CentOS'
+
+  - name: (CentOS) Install Docker
+    yum:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    when: ansible_distribution  == 'CentOS'
+
+  - name: Update docker startup option
+    copy:
+      src: docker.service
+      dest: /usr/lib/systemd/system/docker.service
+    when: ansible_distribution  == 'CentOS'
+
+############## Ubunt installation #################################
+
+  - name: (Ubuntu) install Docker
+    apt:
+      name: docker.io
+      state: present
+      update_cache: true
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: Start & enable Docker service
+    service:
+      name: docker
+      state: started
+      enabled: yes

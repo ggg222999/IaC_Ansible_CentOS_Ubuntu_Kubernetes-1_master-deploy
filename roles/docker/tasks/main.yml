@@ -1,0 +1,4 @@
+---
+  - name: (Ubuntu) deploy kubernetes
+    include: docker.yml
+

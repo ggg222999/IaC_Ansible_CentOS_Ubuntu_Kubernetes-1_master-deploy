@@ -1,0 +1,22 @@
+---
+# Create token for worker node to join cluster
+  - name: get join command
+    shell: kubeadm token create --print-join-command
+    register: join_command
+    when: inventory_hostname in groups['k8smaster']
+
+  - name: Attach kubeadm join command to a file on Ansible control node
+    local_action: "copy content='{{ join_command.stdout_lines[0] }}' dest=join-command"
+    when: inventory_hostname in groups['k8smaster']
+
+  - name: Copy the join-command file created above to worker node
+    copy: src=join-command dest=/tmp/kubeadm-join.sh mode=0777
+    when: inventory_hostname in groups['k8sworker']
+
+  - name: Join the worker node to cluster
+    command: sh /tmp/kubeadm-join.sh
+    when: inventory_hostname in groups['k8sworker']
+
+#  - name: assign worker role to the new nodes
+#    shell: "kubectl label node k8sworker01 node-role.kubernetes.io/worker=worker"
+#    when: inventory_hostname in groups['k8smaster']

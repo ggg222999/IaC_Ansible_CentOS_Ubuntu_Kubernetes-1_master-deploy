@@ -1,0 +1,8 @@
+---
+- name: deploy key
+  hosts: targetserver
+  gather_facts: yes
+
+  roles: 
+    - docker
+    - kubernetes

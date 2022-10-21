@@ -1,0 +1,7 @@
+---
+  - name: deploy kubernetes
+    include: kubernetes_cluster.yml
+
+  - name: deploy kubernetes
+    include: kubernetes_join_node.yml
+
